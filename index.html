@@ -34,17 +34,38 @@ button:focus-visible{outline:3px solid #fff}
 .races{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
 .races button{font-size:18px;padding:14px 22px}
 .hint{position:absolute;left:12px;top:44px;font-size:12px;opacity:.85;max-width:300px;text-shadow:0 1px 2px #000}
-@media(max-width:700px){.side{width:130px}#mm{width:130px;height:100px}#log{height:80px}.hint{display:none}}
-#nick{font:800 18px Nunito,sans-serif;padding:10px 14px;border-radius:8px;border:2px solid var(--edge);background:#150e06;color:var(--gold);text-align:center;margin-bottom:16px;width:240px}@media(max-width:700px){.panel{gap:8px;font-size:12px}#inv{grid-template-columns:repeat(3,38px)}#inv div{height:38px}button{padding:9px 10px}}</style></head><body>
+@media(max-width:700px){
+.side{width:110px;right:4px;top:42px;gap:4px}
+#mm{width:110px;height:82px}
+#log{height:64px;font-size:11px}
+#pl{font-size:11px;padding:4px}
+.hint{display:none}
+.panel{gap:6px;font-size:12px;min-height:100px;padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px))}
+.panel h3{font-size:13px}
+#inv{grid-template-columns:repeat(3,36px);gap:3px}
+#inv div{height:36px;font-size:9px}
+button{padding:10px 12px;font-size:13px;min-height:40px;border-radius:10px}
+.bar{gap:10px;font-size:12px;padding:calc(4px + env(safe-area-inset-top,0px)) 8px 4px}
+#btns{gap:5px}
+}
+#nick{font:800 18px Nunito,sans-serif;padding:10px 14px;border-radius:8px;border:2px solid var(--edge);background:#150e06;color:var(--gold);text-align:center;margin-bottom:16px;width:min(240px,80vw)}
+#boxBtn{display:none}
+@media(max-width:700px){#boxBtn{display:inline-block}}
+html{-webkit-text-size-adjust:100%;touch-action:manipulation}
+body{overscroll-behavior:none;-webkit-user-select:none;user-select:none}
+</style></head><body>
 <canvas id="c"></canvas>
 <div class="bar"><span>Золото <b id="rg">0</b></span><span>Дерево <b id="rw">0</b></span><span>Армия <b id="ra">0</b></span><span id="net" style="margin-left:auto">Офлайн</span><span id="who"></span></div>
 <div class="hint">ПК: ЛКМ — выбрать/рамка, ПКМ — приказ, стрелки — камера. Телефон: тап — выбрать/приказ, перетаскивание — камера, «Рамка» — выделение областью.</div>
 <div class="side"><canvas id="mm" width="200" height="150"></canvas><div id="pl">Игроки: только вы (офлайн)</div><div id="log"></div></div>
-<div class="panel"><div style="min-width:170px"><h3 id="nm">Ничего не выбрано</h3><div id="st"></div></div><div id="btns"></div><div id="inv" style="margin-left:auto"></div></div>
+<div class="panel"><div style="min-width:120px"><h3 id="nm">Ничего не выбрано</h3><div id="st"></div></div><div id="btns"></div><button id="boxBtn" type="button">Рамка</button><div id="inv" style="margin-left:auto"></div></div>
 <div id="menu"><div><h1>Три Короны</h1><p>Люди, эльфы и орки делят долину. Добывайте золото, стройте казармы, призывайте героя на алтаре и вскройте сундуки, пока их сторожат злые кабаны.</p>
-<input id="nick" maxlength="14" placeholder="Ваше имя" autocomplete="off"><div class="races"><button data-r="human">Люди</button><button data-r="elf">Эльфы</button><button data-r="orc">Орки</button></div></div></div>
+<input id="nick" maxlength="14" placeholder="Ваше имя" autocomplete="off">
+<input id="room" maxlength="12" placeholder="Комната (пусто = мир)" autocomplete="off" style="font:800 16px Nunito,sans-serif;padding:8px 12px;border-radius:8px;border:2px solid var(--edge);background:#150e06;color:var(--gold);text-align:center;margin-bottom:12px;width:min(240px,80vw);display:block;margin-left:auto;margin-right:auto">
+<div class="races"><button data-r="human">Люди</button><button data-r="elf">Эльфы</button><button data-r="orc">Орки</button></div>
+<p style="font-size:12px;opacity:.8;margin-top:12px">Мультиплеер: укажите одинаковую комнату. Без Supabase — офлайн.</p></div></div>
 <script>
-const SB_URL="",SB_KEY=""; // ← Supabase
+const SB_URL="https://bknohyuoiquxpdfpccln.supabase.co",SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJrbm9oeXVvaXF1eHBkZnBjY2xuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2OTIyOTIsImV4cCI6MjEwNjI2ODI5Mn0.zJQ0n6YgiP3vbdt66w0eZOloO8TYJaLACbIDcGIHirQ"; // ← Supabase
 const T=32,MW=64,MH=48,$=id=>document.getElementById(id);
 const cv=$("c"),g=cv.getContext("2d"),mm=$("mm").getContext("2d");
 const R={human:{n:"Люди",col:"#3b82f6",foot:"Ополченец",hero:"Сэр Бублик",q:["Я сюда за славой, а не за уборкой!","Кто сказал «мечом махать легко»? Я убью его. Потом.","Пусть враги трепещут. Или хотя бы вежливо отойдут."]},
@@ -78,7 +99,7 @@ function newGame(){G={e:[],g:250,w:120,x:Array.from({length:MH},()=>Array(MW).fi
  for(let i=0;i<260;i++){const x=rnd(30,MW*T-30),y=rnd(30,MH*T-30);if(Math.hypot(x-bx,y-by_)>150&&hash(x>>6,y>>6)>.35)add({k:"r",t:"tree",x,y,hp:1,wood:80,team:0})}
  [[600,1000],[1000,700],[1500,1100],[1200,300],[400,400],[1800,700]].forEach(([x,y],i)=>{for(let j=0;j<2+i%3;j++)unit("creep",9,x+rnd(-45,45),y+rnd(-45,45));add({k:"c",t:"chest",x,y,hp:1,team:0})});
  cam.x=0;cam.y=MH*T-560;reveal()}
-function reveal(){G.e.forEach(e=>{if(e.team==me&&e.k!="c"){const cx=e.x/T|0,cy=e.y/T|0,r=e.k=="b"?7:6;for(let y=cy-r;y<=cy+r;y++)for(let x=cx-r;x<=cx+r;x++)if(x>=0&&y>=0&&x<MW&&y<MH&&(x-cx)**2+(y-cy)**2<=r*r)G.x[y][x]=1}})}
+function reveal(){G.e.forEach(e=>{if(e.team==me&&e.k!="c"&&e.hp>0){const cx=e.x/T|0,cy=e.y/T|0,r=e.k=="b"?9:(e.t=="hero"?8:7);for(let y=cy-r;y<=cy+r;y++)for(let x=cx-r;x<=cx+r;x++)if(x>=0&&y>=0&&x<MW&&y<MH&&(x-cx)**2+(y-cy)**2<=r*r)G.x[y][x]=1}})}
 const seen=e=>G.x[Math.min(MH-1,e.y/T|0)][Math.min(MW-1,e.x/T|0)];
 /* ---------- логика ---------- */
 function order(us,wx,wy){const tg=[...G.e].reverse().find(e=>e.hp>0&&Math.hypot(e.x-wx,e.y-wy)<(e.k=="b"?B[e.t].w/2:24)&&seen(e));let n=0;
@@ -110,8 +131,7 @@ function tick(){const H=G.hero;
  G.e=G.e.filter(e=>e.hp>0);sel=sel.filter(e=>e.hp>0);
  if(G.hero&&G.hero.hp<=0)G.hero=null;
  parts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.15;p.l--});parts=parts.filter(p=>p.l>0);texts.forEach(t=>{t.y-=.6;t.l--});texts=texts.filter(t=>t.l>0);
- if(!(tk=(tk||0)+1)%20)reveal()}
-let tk=0;
+ reveal()}
 /* ---------- рисование ---------- */
 function shade(c,a){return c}
 function drawU(u,t){const s=U[u.t],cr=u.team==9,col=cr?"#7a5230":R[race].col,mv=u.task=="mv"||u.task=="atk"||u.task=="ret",bob=Math.sin(t/(mv?90:300)+u.ph)*(mv?2.5:.8),x=u.x-cam.x,y=u.y-cam.y+bob,r=s.r,f=u.face||1;
@@ -159,8 +179,8 @@ function draw(t){const W=cv.width,Hh=cv.height;g.fillStyle="#000";g.fillRect(0,0
  Object.values(G.online).forEach(o=>{if(o.x==null||!G.x[o.y/T|0]?.[o.x/T|0])return;g.fillStyle=R[o.race]?.col||"#fff";g.beginPath();g.arc(o.x-cam.x,o.y-cam.y,10,0,7);g.fill();g.fillStyle="#fff";g.font="12px Nunito";g.textAlign="center";g.fillText(o.name,o.x-cam.x,o.y-cam.y-16)});
  parts.forEach(p=>{g.fillStyle=p.c;g.globalAlpha=p.l/20;g.fillRect(p.x-cam.x,p.y-cam.y,3,3)});g.globalAlpha=1;
  texts.forEach(x=>{g.fillStyle=x.c;g.font="800 14px Nunito";g.textAlign="center";g.fillText(x.s,x.x-cam.x,x.y-cam.y)});
- // туман
- for(let y=cam.y/T|0;y<(cam.y+Hh)/T+1&&y<MH;y++)for(let x=cam.x/T|0;x<(cam.x+W)/T+1&&x<MW;x++)if(!G.x[y][x]){g.fillStyle="#05030a";g.fillRect(x*T-cam.x,y*T-cam.y,T+1,T+1)}
+ // туман (без +1, чтобы не заливать край открытой клетки)
+ for(let y=Math.max(0,cam.y/T|0);y<Math.min(MH,(cam.y+Hh)/T+1);y++)for(let x=Math.max(0,cam.x/T|0);x<Math.min(MW,(cam.x+W)/T+1);x++)if(!G.x[y][x]){g.fillStyle="#05030aee";g.fillRect(x*T-cam.x,y*T-cam.y,T,T)}
  const vg=g.createRadialGradient(W/2,Hh/2,Math.min(W,Hh)*.45,W/2,Hh/2,Math.max(W,Hh)*.8);vg.addColorStop(0,"#0000");vg.addColorStop(1,"#000b");g.fillStyle=vg;g.fillRect(0,0,W,Hh);
  if(build){const w=B[build].w;g.globalAlpha=.6;g.fillStyle="#8f8";g.fillRect(mouse.x-w/2,mouse.y-w/3,w,w*.7);g.globalAlpha=1}
  if(drag){g.strokeStyle="#7CFC00";g.lineWidth=1;g.strokeRect(drag.x,drag.y,mouse.x-drag.x,mouse.y-drag.y)}
@@ -183,7 +203,9 @@ function spell(k){const h=G.hero;if(!h)return;const sp=R[race][k=="q"?"sq":"sw"]
  if(k=="q"){G.e.filter(e=>e.team==9&&dist(e,h)<sp.rad).forEach(e=>hurt(e,sp.d,h));for(let i=0;i<40;i++)parts.push({x:h.x,y:h.y,vx:rnd(-6,6),vy:rnd(-6,2),l:28,c:R[race].fx});beep(90,.5,"sawtooth",.2,30);say(R[race].hero+": "+R[race].q[1+(Math.random()*2|0)],"#ffe08a")}
  else{G.e.filter(e=>e.team==me&&e.k=="u"&&dist(e,h)<sp.rad).forEach(e=>{e.hp=Math.min(e.mhp,e.hp+sp.h);for(let i=0;i<3;i++)parts.push({x:e.x,y:e.y,vx:rnd(-1,1),vy:rnd(-3,-1),l:25,c:"#9f9"})});beep(500,.4,"sine",.2,1000)}}
 function drawInv(){$("inv").innerHTML="";for(let i=0;i<6;i++){const it=G.items[i],d=document.createElement("div");d.textContent=it?it[0]:"";if(it)d.onclick=()=>{const h=G.hero;if(!h)return;if(it[1]=="heal")h.hp=Math.min(h.mhp,h.hp+it[2]);else if(it[1]=="dmg")h.dmg+=it[2];else if(it[1]=="hp"){h.mhp+=it[2];h.hp+=it[2]}else G.xp+=it[2];G.items.splice(i,1);sOk();drawInv()};$("inv").append(d)}}
-let isTouch=false,boxMode=false,tp=null;
+let isTouch=false,boxMode=false,tp=null,roomId="";
+$("boxBtn")&&($("boxBtn").onclick=()=>{boxMode=!boxMode;$("boxBtn").style.filter=boxMode?"":"grayscale(1) brightness(.85)";$("boxBtn").textContent=boxMode?"Рамка ✓":"Рамка"});
+
 const wp=e=>({x:e.clientX+cam.x,y:e.clientY+cam.y});
 const under=p=>G.e.filter(u=>u.team==me&&u.hp>0&&Math.hypot(u.x-p.x,u.y-p.y)<(u.k=="b"?B[u.t].w/2:22)).sort((a,b)=>dist(a,p)-dist(b,p))[0];
 function place(p){if(cost(...B[build].c)){if(sel.find(s=>s.t=="worker")){bld(build,me,p.x,p.y,false);sOk()}else{G.g+=B[build].c[0];G.w+=B[build].c[1];say("Выберите рабочего","#f88")}}build=null}
@@ -208,19 +230,27 @@ let sb,ch,pid=localStorage.pid||(localStorage.pid=crypto.randomUUID()),pname="Г
 function renderPl(){const o=Object.entries(G.online);$("pl").innerHTML="Игроки: "+(o.length?"":"только вы")+o.map(([k,p])=>`<div>${p.name} <button data-a="gift" data-k="${k}">+50з</button><button data-a="ally" data-k="${k}">Союз</button></div>`).join("");
  $("pl").querySelectorAll("button").forEach(b=>b.onclick=()=>{if(b.dataset.a=="gift"&&cost(50,0)){ch.send({type:"broadcast",event:"gift",payload:{to:b.dataset.k,from:pname}});say("Отправлено 50 золота: "+G.online[b.dataset.k].name)}else if(b.dataset.a=="ally"){ch.send({type:"broadcast",event:"ally",payload:{to:b.dataset.k,from:pname}});say("Предложен союз: "+G.online[b.dataset.k].name)}})}
 function net(t){$("net").textContent=t}
-async function online(){if(!SB_URL){net("Офлайн");return say("Офлайн-режим: Supabase не подключён (нужны SB_URL и SB_KEY).","#9be7ff")}
+async function online(){if(!SB_URL||!SB_KEY){net("Офлайн");return say("Офлайн. Для мультиплеера впиши SB_URL и SB_KEY (Supabase Realtime, таблица не обязательна).","#9be7ff")}
  try{net("Подключение…");await new Promise((r,j)=>{const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js";s.onload=r;s.onerror=j;document.head.append(s)});
- sb=supabase.createClient(SB_URL,SB_KEY);const {data,error}=await sb.from("progress").select("data").eq("player",pid).maybeSingle();if(error)throw error;if(data&&data.data){G.g=data.data.g;G.w=data.data.w;G.lvl=data.data.lvl||1;say("Прогресс загружен")}
- ch=sb.channel("world",{config:{presence:{key:pid},broadcast:{self:false}}});
- ch.on("presence",{event:"sync"},()=>{const s=ch.presenceState();G.online={};Object.keys(s).forEach(k=>{if(k!=pid)G.online[k]=s[k][0]});net("Онлайн: "+(Object.keys(G.online).length+1));renderPl()})
+ sb=supabase.createClient(SB_URL,SB_KEY);
+ // прогресс — опционально, если таблица есть
+ try{const {data}=await sb.from("progress").select("data").eq("player",pid).maybeSingle();if(data&&data.data){G.g=data.data.g??G.g;G.w=data.data.w??G.w;G.lvl=data.data.lvl||1;say("Прогресс загружен")}}catch(_){}
+ const chanName="room:"+(roomId||"world");
+ ch=sb.channel(chanName,{config:{presence:{key:pid},broadcast:{self:false}}});
+ ch.on("presence",{event:"sync"},()=>{const s=ch.presenceState();G.online={};Object.keys(s).forEach(k=>{if(k!=pid)G.online[k]=s[k][0]});net("Онлайн: "+(Object.keys(G.online).length+1)+(roomId?" · "+roomId:""));renderPl()})
   .on("broadcast",{event:"gift"},({payload})=>{if(payload.to==pid){G.g+=50;say(payload.from+" прислал 50 золота!","#9f9")}})
   .on("broadcast",{event:"ally"},({payload})=>{if(payload.to==pid)say(payload.from+" предлагает союз. Ответь ему тем же!","#9f9")})
-  .subscribe(s=>{if(s=="SUBSCRIBED"){net("Онлайн: 1");ch.track({name:pname,race,x:null,y:null});say("Вы в общем мире как "+pname,"#9f9")}else if(s=="CHANNEL_ERROR"||s=="TIMED_OUT")net("Ошибка сети")});
- setInterval(async()=>{const h=G.e.find(e=>e.t=="hall"&&e.team==me);if(h)ch.track({name:pname,race,x:h.x,y:h.y});const r=await sb.from("progress").upsert({player:pid,data:{g:G.g|0,w:G.w|0,lvl:G.lvl,name:pname}});if(r.error&&!G.eShown){G.eShown=1;say("Supabase: "+r.error.message,"#f88")}},8000)
- }catch(e){net("Ошибка Supabase");say("Supabase: "+(e.message||"не удалось подключиться"),"#f88")}}
+  .on("broadcast",{event:"ping"},({payload})=>{/* задел под общий мир */})
+  .subscribe(s=>{if(s=="SUBSCRIBED"){net("Онлайн: 1"+(roomId?" · "+roomId:""));ch.track({name:pname,race,x:null,y:null});say("Комната «"+(roomId||"мир")+"» как "+pname,"#9f9")}else if(s=="CHANNEL_ERROR"||s=="TIMED_OUT")net("Ошибка сети")});
+ setInterval(async()=>{if(!ch)return;const h=G.e.find(e=>e.t=="hall"&&e.team==me);const hero=G.hero;const px=hero?hero.x:(h?h.x:null),py=hero?hero.y:(h?h.y:null);ch.track({name:pname,race,x:px,y:py});
+  try{await sb.from("progress").upsert({player:pid,data:{g:G.g|0,w:G.w|0,lvl:G.lvl,name:pname,room:roomId}})}catch(_){}
+ },5000)
+ }catch(e){net("Ошибка Supabase");say("Supabase: "+(e.message||"не удалось"),"#f88")}}
 /* ---------- старт ---------- */
-$("nick").value=localStorage.nick||"";document.querySelectorAll("#menu button").forEach(b=>b.onclick=()=>{race=b.dataset.r;pname=$("nick").value.trim().slice(0,14)||pname;localStorage.nick=pname;$("menu").remove();ac();music();genTerrain();newGame();drawInv();$("who").textContent=R[race].n+" · "+pname;
- say("Добро пожаловать! Выберите рабочего и ПКМ по золотой шахте.");online();requestAnimationFrame(loop)});
+$("nick").value=localStorage.nick||"";
+$("room").value=localStorage.room||"";
+document.querySelectorAll("#menu .races button").forEach(b=>b.onclick=()=>{race=b.dataset.r;pname=$("nick").value.trim().slice(0,14)||pname;roomId=($("room").value||"").trim().toLowerCase().slice(0,12);localStorage.nick=pname;localStorage.room=roomId;$("menu").remove();ac();music();genTerrain();newGame();drawInv();$("who").textContent=R[race].n+" · "+pname;
+ say("Добро пожаловать! Рабочий → шахта. Телефон: тап = приказ, «Рамка» = выделение.");online();requestAnimationFrame(loop)});
 function loop(t){if(G){const sp=10;if(keys.arrowleft||keys.a)cam.x-=sp;if(keys.arrowright||keys.d)cam.x+=sp;if(keys.arrowup||keys.w&&0)cam.y-=sp;if(keys.arrowdown||keys.s)cam.y+=sp;
   if(!isTouch&&mouse.x<8)cam.x-=sp;if(!isTouch&&mouse.x>cv.width-8)cam.x+=sp;
   cam.x=Math.max(0,Math.min(MW*T-cv.width,cam.x));cam.y=Math.max(0,Math.min(MH*T-cv.height,cam.y));tick();draw(t);ui()}requestAnimationFrame(loop)}
